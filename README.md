@@ -40,14 +40,10 @@ REF_TABLE_COL_2=team
 ## Usage
 
 ```bash
-python sync_services.py --days 7 --page-limit 100 --verbose
+python sync_services.py --days 7 --page-limit 100 --verbose --query "demo:your-tag"
 ```
 
-Only events with the tag `*` are included by default. Override with:
-
-```bash
-python sync_services.py --query "demo:your-tag"
-```
+Default query is `*` (all events). Override with `--query` as shown above.
 
 List Reference Tables:
 
