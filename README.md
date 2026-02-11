@@ -31,8 +31,8 @@ Create a `.env` file (or export variables in your shell):
 DD_API_KEY=...
 DD_APP_KEY=...
 DD_SITE=datadoghq.com
-REF_TABLE_NAME=macbank_mapper
-REF_TABLE_ID=584b46b4-f86f-422d-ae62-ab634f1295bf
+REF_TABLE_NAME=
+REF_TABLE_ID=
 REF_TABLE_COL_1=service
 REF_TABLE_COL_2=team
 ```
@@ -43,10 +43,10 @@ REF_TABLE_COL_2=team
 python sync_services.py --days 7 --page-limit 100 --verbose
 ```
 
-Only events with the tag `demo:macbank-ir` are included by default. Override with:
+Only events with the tag `*` are included by default. Override with:
 
 ```bash
-python sync_services.py --query "demo:macbank-ir"
+python sync_services.py --query "demo:your-tag"
 ```
 
 List Reference Tables:
@@ -55,8 +55,6 @@ List Reference Tables:
 python sync_services.py --list-tables
 ```
 
-Use the table ID from the list output for `REF_TABLE_ID`. This is the
-recommended way to obtain the UUID since the UI does not show it.
 
 Dry run (no writes):
 

@@ -15,8 +15,7 @@ What this does:
 Env:
   DD_API_KEY, DD_APP_KEY
   DD_SITE (default datadoghq.com)
-  REF_TABLE_NAME (default macbank_mapper)
-  REF_TABLE_ID (optional override UUID)
+  REF_TABLE_NAME (default reference_table)
   REF_TABLE_COL_1 (default service)
   REF_TABLE_COL_2 (default team)
 """
@@ -350,7 +349,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--service-col", default=None, help="Reference table service column (defaults to REF_TABLE_COL_1)")
     p.add_argument("--team-col", default=None, help="Reference table team column (defaults to REF_TABLE_COL_2)")
     p.add_argument("--days", type=int, default=7, help="Days back to query Events")
-    p.add_argument("--query", default="demo:macbank-ir", help="Datadog Events query string")
+    p.add_argument("--query", default="*", help="Datadog Events query string")
     p.add_argument("--page-limit", type=int, default=100, help="Events page size (max 100)")
     p.add_argument("--max-pages", type=int, default=None, help="Stop after this many pages")
     p.add_argument("--verbose", action="store_true", help="Verbose logging")
@@ -366,7 +365,7 @@ def main() -> None:
     app_key = os.getenv("DD_APP_KEY")
     site = os.getenv("DD_SITE", "datadoghq.com")
 
-    table_name = os.getenv("REF_TABLE_NAME", "macbank_mapper")
+    table_name = os.getenv("REF_TABLE_NAME", "reference_table")
     table_id_override = os.getenv("REF_TABLE_ID")
 
     service_col = os.getenv("REF_TABLE_COL_1", "service")
