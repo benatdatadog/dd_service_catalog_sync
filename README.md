@@ -31,10 +31,10 @@ Create a `.env` file (or export variables in your shell):
 DD_API_KEY=...
 DD_APP_KEY=...
 DD_SITE=datadoghq.com
-MACBANK_MAPPER=macbank_mapper
-MACBANK_MAPPER_ID=584b46b4-f86f-422d-ae62-ab634f1295bf
-MACBANK_MAPPER_SERVICE_COL=service
-MACBANK_MAPPER_TEAM_COL=team
+REF_TABLE_NAME=macbank_mapper
+REF_TABLE_ID=584b46b4-f86f-422d-ae62-ab634f1295bf
+REF_TABLE_COL_1=service
+REF_TABLE_COL_2=team
 ```
 
 ## Usage
@@ -54,6 +54,9 @@ List Reference Tables:
 ```bash
 python sync_services.py --list-tables
 ```
+
+Use the table ID from the list output for `REF_TABLE_ID`. This is the
+recommended way to obtain the UUID since the UI does not show it.
 
 Dry run (no writes):
 
