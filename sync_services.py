@@ -66,10 +66,14 @@ def auth_headers_jsonapi(api_key: str, app_key: str) -> Dict[str, str]:
 # -----------------------------
 def assign_dummy_teams(services: Iterable[str]) -> Dict[str, str]:
     assigned: Dict[str, str] = {}
-    teams = ["team 1", "team 2"]
+    teams = ["team1", "team2"]
     for idx, service in enumerate(sorted(set(s for s in services if s))):
         assigned[service] = teams[idx % len(teams)]
     return assigned
+
+
+def normalize_team(team: str) -> str:
+    return "".join(str(team).split()).lower()
 
 
 def _extract_row_values(item: Dict) -> Dict[str, str]:
@@ -240,8 +244,9 @@ def get_reference_table_rows_by_id(
     service_col: str,
     team_col: str,
     verbose: bool = False,
-) -> Dict[str, str]:
+) -> Tuple[Dict[str, str], Dict[str, str]]:
     mapping: Dict[str, str] = {}
+    raw_teams: Dict[str, str] = {}
     row_list = [r for r in row_ids if r]
     if not row_list:
         return mapping
@@ -275,9 +280,10 @@ def get_reference_table_rows_by_id(
             service = (values.get(service_col) or "").strip()
             team = (values.get(team_col) or "").strip()
             if service:
-                mapping[service] = team
+                raw_teams[service] = team
+                mapping[service] = normalize_team(team)
 
-    return mapping
+    return mapping, raw_teams
 
 
 def create_reference_table_rows(
@@ -420,7 +426,7 @@ def main() -> None:
 
     rows_url = get_reference_table_rows_endpoint(base_url, table_id)
 
-    mapping = get_reference_table_rows_by_id(
+    mapping, raw_teams = get_reference_table_rows_by_id(
         rows_url=rows_url,
         headers_jsonapi=headers_jsonapi,
         row_ids=services,
@@ -428,6 +434,24 @@ def main() -> None:
         team_col=team_col,
         verbose=args.verbose,
     )
+
+    updates = {
+        service: normalize_team(team)
+        for service, team in raw_teams.items()
+        if team and normalize_team(team) != team
+    }
+    if updates:
+        if args.dry_run:
+            if args.verbose:
+                print(f"DRY RUN: would normalize {len(updates)} reference table rows")
+        else:
+            create_reference_table_rows(
+                rows_url=rows_url,
+                headers_jsonapi=headers_jsonapi,
+                service_col=service_col,
+                team_col=team_col,
+                rows=updates,
+            )
 
     # Create missing mappings (dummy teams)
     missing_services = [s for s in services if s not in mapping]
